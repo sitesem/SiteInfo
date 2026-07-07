@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Архитектура сайта | 3D Experience</title>
-    <!-- Подключаем Three.js через CDN -->
+    <title>Архитектура сайта | Fixed 3D Experience</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
     <style>
         :root {
@@ -12,7 +11,7 @@
             --card-bg: #16161e;
             --text-color: #e0e0e0;
             --text-muted: #a0a0a0;
-            --nav-bg: rgba(10, 10, 12, 0.8);
+            --nav-bg: rgba(10, 10, 12, 0.85);
             --accent-color: #00f2ff; 
             --accent-glow: rgba(0, 242, 255, 0.4);
             --accent-soft: rgba(0, 242, 255, 0.1);
@@ -25,7 +24,7 @@
             --card-bg: #ffffff;
             --text-color: #1a1a1e;
             --text-muted: #555555;
-            --nav-bg: rgba(245, 247, 250, 0.8);
+            --nav-bg: rgba(245, 247, 250, 0.85);
             --accent-glow: rgba(0, 0, 0, 0.1);
             --accent-soft: rgba(0, 0, 0, 0.05);
         }
@@ -40,18 +39,16 @@
             line-height: 1.6;
         }
 
-        /* Контейнер для Three.js */
         #canvas-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Глобус на заднем фоне */
+            z-index: -1;
             pointer-events: none;
         }
 
-        /* Навигация */
         .controls-nav {
             position: fixed;
             top: 20px;
@@ -59,39 +56,48 @@
             transform: translateX(-50%);
             z-index: 1000;
             background: var(--nav-bg);
-            backdrop-filter: blur(10px);
-            padding: 12px 24px;
+            backdrop-filter: blur(12px);
+            padding: 10px 20px;
             border-radius: 50px;
             display: flex;
-            gap: 20px;
+            gap: 15px;
             align-items: center;
             border: 1px solid var(--accent-soft);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            width: max-content;
-            max-width: 90vw;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: auto;
+            max-width: 95vw;
+            flex-wrap: wrap;
+            justify-content: center;
+            box-sizing: border-box;
         }
 
-        .control-group { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+        .control-group { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
         .theme-btn {
             background: var(--accent-soft);
             color: var(--text-color);
-            padding: 5px 12px;
+            padding: 4px 12px;
             border-radius: 20px;
             border: none;
             cursor: pointer;
             transition: 0.2s;
+            font-size: 0.75rem;
         }
-        .color-dot {
-            width: 20px; height: 20px; border-radius: 50%; cursor: pointer;
-            border: 2px solid transparent; transition: 0.2s;
-        }
-        .color-dot.active { border-color: var(--text-color); }
 
-        /* Основной контент */
-        .content {
-            position: relative;
-            z-index: 1;
+        .color-dot {
+            width: 18px; height: 18px; border-radius: 50%; cursor: pointer;
+            border: 2px solid transparent; transition: 0.2s;
+            flex-shrink: 0;
         }
+        .color-dot.active { border-color: var(--text-color); transform: scale(1.1); }
+
+        .content { position: relative; z-index: 1; }
 
         .hero {
             height: 100vh;
@@ -104,7 +110,7 @@
         }
 
         .hero h1 {
-            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-size: clamp(2.2rem, 8vw, 4.5rem);
             margin-bottom: 20px;
         }
 
@@ -142,11 +148,18 @@
         .card p { color: var(--text-muted); }
         .card:hover { border-color: var(--accent-color); box-shadow: 0 10px 30px var(--accent-glow); }
 
-        footer { text-align: center; padding: 60px 20px; border-top: 1px solid var(--accent-soft); }
+        footer { text-align: center; padding: 100px 20px; border-top: 1px solid var(--accent-soft); }
         footer a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
 
         @media (max-width: 768px) {
-            .controls-nav { bottom: 20px; top: auto; width: 90%; }
+            .controls-nav { 
+                bottom: 20px; 
+                top: auto; 
+                padding: 8px 15px;
+                gap: 10px;
+            }
+            .control-group { gap: 5px; }
+            .hero h1 { font-size: 2rem; }
         }
     </style>
 </head>
@@ -165,61 +178,61 @@
             <div class="color-dot active" style="background: #00f2ff;" onclick="setAccent('#00f2ff', this)"></div>
             <div class="color-dot" style="background: #00ff88;" onclick="setAccent('#00ff88', this)"></div>
             <div class="color-dot" style="background: #bf00ff;" onclick="setAccent('#bf00ff', this)"></div>
+            <div class="color-dot" style="background: #ff0055;" onclick="setAccent('#ff0055', this)"></div>
         </div>
     </nav>
 
     <div class="content">
         <section class="hero">
             <h1 class="floating">Цифровая <span>Материя</span></h1>
-            <p style="color: var(--text-muted); max-width: 600px;">Прокрутите вниз, чтобы увидеть, как структура этого сайта распадается на атомы и восстанавливается.</p>
+            <p style="color: var(--text-muted); max-width: 600px;">Скролльте вниз, чтобы разрушить сферу, и вверх, чтобы собрать её обратно.</p>
         </section>
 
         <section class="section">
-            <h2>Как это работает?</h2>
+            <h2 style="font-size: 2rem; margin-bottom: 30px;">Техническая реализация</h2>
             <div class="grid">
                 <div class="card" data-tilt>
-                    <h3>Three.js & GPU</h3>
-                    <p>Глобус состоит из тысяч точек, которые рендерятся через BufferGeometry. Это позволяет обрабатывать их прямо на видеокарте.</p>
+                    <h3>Обратимая анимация</h3>
+                    <p>Использование LERP (Linear Interpolation) гарантирует, что каждая точка вернётся в свою точную исходную координату.</p>
                 </div>
                 <div class="card" data-tilt>
-                    <h3>LERP-Анимация</h3>
-                    <p>Мы используем линейную интерполяцию для плавного перехода между итерациями сферы и хаоса.</p>
+                    <h3>Оптимизация GPU</h3>
+                    <p>BufferGeometry и ограничение PixelRatio обеспечивают 60 FPS даже на мобильных Retina-экранах.</p>
                 </div>
                 <div class="card" data-tilt>
-                    <h3>Оптимизация</h3>
-                    <p>Количество частиц адаптируется под ваше устройство, чтобы даже на телефоне сайт работал плавно.</p>
+                    <h3>Адаптивный UI</h3>
+                    <p>Док-панель теперь использует гибкую верстку, предотвращая выход элементов за границы экрана.</p>
                 </div>
             </div>
         </section>
 
-        <footer style="height: 50vh;">
+        <footer style="height: 100vh;">
             <p>© 2026 | Powered by 🍪 | <a href="#">GitHub</a></p>
         </footer>
     </div>
 
     <script>
-        /* --- УПРАВЛЕНИЕ ТЕМАМИ И ЦВЕТАМИ --- */
+        /* --- UI LOGIC --- */
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
         }
+
         function setAccent(color, element) {
             document.documentElement.style.setProperty('--accent-color', color);
             document.documentElement.style.setProperty('--accent-glow', color + '66');
             document.documentElement.style.setProperty('--accent-soft', color + '22');
             document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
             element.classList.add('active');
-            
-            // Обновляем цвет частиц глобуса
             if(globeParticles) {
                 globeParticles.material.color.set(color);
             }
         }
 
-        /* --- THREE.JS ГЛОБУС --- */
+        /* --- THREE.JS LOGIC --- */
         let scene, camera, renderer, globeParticles;
-        let particlesGeometry, positions, randomPositions;
-        let scrollPercent = 0;
-        let targetScrollPercent = 0;
+        let particlesGeometry, spherePositions, randomPositions;
+        let currentScroll = 0;
+        let targetScroll = 0;
 
         function initThree() {
             scene = new THREE.Scene();
@@ -227,40 +240,39 @@
             camera.position.z = 3;
 
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Оптимизация для Retina
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-            // Определяем количество частиц в зависимости от устройства
-            const count = window.innerWidth < 768 ? 2500 : 6000;
+            const particleCount = window.innerWidth < 768 ? 3000 : 7000;
             
             particlesGeometry = new THREE.BufferGeometry();
-            positions = new Float32Array(count * 3); 
-            randomPositions = new Float32Array(count * 3);
+            spherePositions = new Float32Array(particleCount * 3);
+            randomPositions = new Float32Array(particleCount * 3);
 
-            for (let i = 0; i < count * 3; i++) {
-                // Создаем форму сферы (распределяем точки по поверхности)
-                if (i % 3 === 0) {
-                    const phi = Math.acos(-1 + (2 * i / 3) / count);
-                    const theta = Math.sqrt(count * Math.PI) * (i / 3);
-                    positions[i] = Math.sin(phi) * Math.cos(theta);
-                    positions[i+1] = Math.sin(phi) * Math.sin(theta);
-                    positions[i+2] = Math.cos(phi);
-                }
+            for (let i = 0; i < particleCount; i++) {
+                const i3 = i * 3;
+                // Fibonacci Sphere distribution for uniform points
+                const phi = Math.acos(-1 + (2 * i) / particleCount);
+                const theta = Math.sqrt(particleCount * Math.PI) * i;
                 
-                // Создаем случайные позиции для "распада"
-                randomPositions[i] = (Math.random() - 0.5) * 10;
-                randomPositions[i+1] = (Math.random() - 0.5) * 10;
-                randomPositions[i+2] = (Math.random() - 0.5) * 10;
+                spherePositions[i3] = Math.sin(phi) * Math.cos(theta);
+                spherePositions[i3+1] = Math.sin(phi) * Math.sin(theta);
+                spherePositions[i3+2] = Math.cos(phi);
+
+                randomPositions[i3] = (Math.random() - 0.5) * 12;
+                randomPositions[i3+1] = (Math.random() - 0.5) * 12;
+                randomPositions[i3+2] = (Math.random() - 0.5) * 12;
             }
 
-            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(spherePositions), 3));
             
             const material = new THREE.PointsMaterial({
-                size: 0.015,
+                size: 0.012,
                 color: 0x00f2ff,
                 transparent: true,
-                opacity: 0.8
+                opacity: 0.8,
+                sizeAttenuation: true
             });
 
             globeParticles = new THREE.Points(particlesGeometry, material);
@@ -270,46 +282,41 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // Плавное приближение к значению скролла (LERP)
-            scrollPercent += (targetScrollPercent - scrollPercent) * 0.05;
+            // Smooth Interpolation of scroll value
+            currentScroll += (targetScroll - currentScroll) * 0.07;
 
-            const posArray = particlesGeometry.attributes.position.array;
-            for (let i = 0; i < posArray.length; i++) {
-                // Интерполяция между исходной позицией (sphere) и случайной (chaos)
-                const start = positions[i];
+            const positions = particlesGeometry.attributes.position.array;
+            for (let i = 0; i < positions.length; i++) {
+                const start = spherePositions[i];
                 const end = randomPositions[i];
-                posArray[i] = start + (end - start) * scrollPercent;
+                // STRICT LERP: Guaranteed return to start position when currentScroll -> 0
+                positions[i] = start + (end - start) * currentScroll;
             }
             particlesGeometry.attributes.position.needsUpdate = true;
 
-            // Медленное вращение
             globeParticles.rotation.y += 0.002;
             globeParticles.rotation.x += 0.001;
 
             renderer.render(scene, camera);
         }
 
-        // Оптимизированный обработчик скролла
         window.addEventListener('scroll', () => {
             const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-            targetScrollPercent = window.scrollY / maxScroll;
-        });
+            targetScroll = Math.max(0, Math.min(1, window.scrollY / maxScroll));
+        }, { passive: true });
 
-        // Обработка изменения размера окна
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        /* --- Остальной интерактив --- */
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
         }, { threshold: 0.1 });
 
         document.querySelectorAll('.card').forEach(c => observer.observe(c));
 
-        // Старт приложения
         initThree();
         animate();
     </script>
