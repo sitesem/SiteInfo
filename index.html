@@ -3,31 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Архитектура сайта | Интерактивный гид PRO</title>
+    <title>Архитектура сайта | 3D Experience</title>
+    <!-- Подключаем Three.js через CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
     <style>
-        /* 
-           --- СИСТЕМА ПЕРЕМЕННЫХ (DESIGN TOKENS) --- 
-           Все цвета завязаны на переменные. Это позволяет менять тему и акцент 
-           одной строчкой кода в JS.
-        */
         :root {
-            /* Цвета для темной темы (по умолчанию) */
             --bg-color: #0a0a0c;
             --card-bg: #16161e;
             --text-color: #e0e0e0;
             --text-muted: #a0a0a0;
             --nav-bg: rgba(10, 10, 12, 0.8);
-            
-            /* Акцентный цвет (меняется через JS) */
             --accent-color: #00f2ff; 
             --accent-glow: rgba(0, 242, 255, 0.4);
             --accent-soft: rgba(0, 242, 255, 0.1);
-            
             --transition-speed: 0.3s;
             --border-radius: 16px;
         }
 
-        /* Светлая тема */
         [data-theme="light"] {
             --bg-color: #f5f7fa;
             --card-bg: #ffffff;
@@ -38,24 +30,28 @@
             --accent-soft: rgba(0, 0, 0, 0.05);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            transition: background-color var(--transition-speed), color var(--transition-speed);
+            transition: background-color var(--transition-speed);
             overflow-x: hidden;
             line-height: 1.6;
         }
 
-        /* 
-           --- НАВИГАЦИЯ И ПАНЕЛЬ УПРАВЛЕНИЯ --- 
-        */
+        /* Контейнер для Three.js */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Глобус на заднем фоне */
+            pointer-events: none;
+        }
+
+        /* Навигация */
         .controls-nav {
             position: fixed;
             top: 20px;
@@ -73,47 +69,30 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             width: max-content;
             max-width: 90vw;
-            flex-wrap: wrap;
-            justify-content: center;
         }
 
-        .control-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .theme-btn, .color-dot {
-            cursor: pointer;
-            border: none;
-            outline: none;
-            transition: transform 0.2s;
-        }
-
+        .control-group { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
         .theme-btn {
             background: var(--accent-soft);
             color: var(--text-color);
             padding: 5px 12px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
         }
-
-        .theme-btn:hover { transform: scale(1.05); }
-
         .color-dot {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid transparent;
+            width: 20px; height: 20px; border-radius: 50%; cursor: pointer;
+            border: 2px solid transparent; transition: 0.2s;
         }
-
         .color-dot.active { border-color: var(--text-color); }
 
-        /* 
-           --- ГЛАВНЫЙ ЭКРАН (HERO) --- 
-        */
+        /* Основной контент */
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
         .hero {
             height: 100vh;
             display: flex;
@@ -122,87 +101,30 @@
             align-items: center;
             text-align: center;
             padding: 0 20px;
-            background: radial-gradient(circle at center, var(--accent-soft) 0%, transparent 70%);
         }
 
         .hero h1 {
-            font-size: clamp(2rem, 8vw, 4.5rem);
+            font-size: clamp(2.5rem, 8vw, 5rem);
             margin-bottom: 20px;
-            color: var(--text-color);
-            line-height: 1.1;
         }
 
-        .hero h1 span {
-            color: var(--accent-color);
-            text-shadow: 0 0 20px var(--accent-glow);
-        }
+        .hero h1 span { color: var(--accent-color); text-shadow: 0 0 20px var(--accent-glow); }
 
         .floating { animation: float 4s ease-in-out infinite; }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
 
-        /* 
-           --- ИНТЕРАКТИВНАЯ СХЕМА СТРУКТУРЫ --- 
-        */
-        .structure-visualizer {
+        .section {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 60px 20px;
+            padding: 100px 20px;
             text-align: center;
-        }
-
-        .map-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            margin-top: 40px;
-        }
-
-        .map-block {
-            width: 250px;
-            padding: 15px;
-            border: 2px dashed var(--accent-color);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: var(--card-bg);
-            position: relative;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
-
-        .map-block:hover {
-            background: var(--accent-color);
-            color: #fff;
-            box-shadow: 0 0 20px var(--accent-glow);
-            transform: scale(1.05);
-        }
-
-        .map-block.highlight {
-            background: var(--accent-color);
-            color: #fff;
-            border-style: solid;
-        }
-
-        /* 
-           --- КАРТОЧКИ ОПИСАНИЯ --- 
-        */
-        .cards-section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 80px 20px;
         }
 
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-            perspective: 1000px;
+            margin-top: 50px;
         }
 
         .card {
@@ -210,206 +132,186 @@
             border: 1px solid var(--accent-soft);
             border-radius: var(--border-radius);
             padding: 40px;
-            transition: all var(--transition-speed);
-            transform-style: preserve-3d;
+            transition: all 0.3s;
             cursor: pointer;
             opacity: 0;
             transform: translateY(30px);
         }
+        .card.visible { opacity: 1; transform: translateY(0); }
+        .card h3 { color: var(--accent-color); margin-bottom: 15px; }
+        .card p { color: var(--text-muted); }
+        .card:hover { border-color: var(--accent-color); box-shadow: 0 10px 30px var(--accent-glow); }
 
-        .card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        footer { text-align: center; padding: 60px 20px; border-top: 1px solid var(--accent-soft); }
+        footer a { color: var(--accent-color); text-decoration: none; font-weight: 600; }
 
-        .card h3 {
-            color: var(--accent-color);
-            margin-bottom: 15px;
-            transform: translateZ(30px);
-        }
-
-        .card p {
-            color: var(--text-muted);
-            transform: translateZ(20px);
-        }
-
-        .card:hover {
-            box-shadow: 0 15px 35px var(--accent-glow);
-            border-color: var(--accent-color);
-        }
-
-        /* 
-           --- ФУТЕР --- 
-        */
-        footer {
-            text-align: center;
-            padding: 60px 20px;
-            border-top: 1px solid var(--accent-soft);
-            margin-top: 40px;
-        }
-
-        footer a {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        /* 
-           --- АДАПТИВНОСТЬ --- 
-        */
         @media (max-width: 768px) {
-            .controls-nav {
-                bottom: 20px;
-                top: auto;
-                width: 90%;
-            }
-            .hero h1 { font-size: 2.5rem; }
-            .map-block { width: 80%; }
+            .controls-nav { bottom: 20px; top: auto; width: 90%; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Панель управления -->
+    <div id="canvas-container"></div>
+
     <nav class="controls-nav">
         <div class="control-group">
-            <span>Тема:</span>
+            <span style="opacity: 0.7">Тема:</span>
             <button class="theme-btn" onclick="setTheme('light')">Светлая</button>
             <button class="theme-btn" onclick="setTheme('dark')">Темная</button>
-            <button class="theme-btn" onclick="setTheme('system')">Система</button>
         </div>
         <div class="control-group">
-            <span>Цвет:</span>
+            <span style="opacity: 0.7">Цвет:</span>
             <div class="color-dot active" style="background: #00f2ff;" onclick="setAccent('#00f2ff', this)"></div>
             <div class="color-dot" style="background: #00ff88;" onclick="setAccent('#00ff88', this)"></div>
             <div class="color-dot" style="background: #bf00ff;" onclick="setAccent('#bf00ff', this)"></div>
-            <div class="color-dot" style="background: #ff0055;" onclick="setAccent('#ff0055', this)"></div>
         </div>
     </nav>
 
-    <!-- Главный экран -->
-    <section class="hero">
-        <h1 class="floating">Сайт-<span>Архитектура</span></h1>
-        <p style="max-width: 600px; color: var(--text-muted);">Интерактивное исследование того, как устроена эта страница. Настраивайте цвета, меняйте темы и изучайте структуру.</p>
-    </section>
+    <div class="content">
+        <section class="hero">
+            <h1 class="floating">Цифровая <span>Материя</span></h1>
+            <p style="color: var(--text-muted); max-width: 600px;">Прокрутите вниз, чтобы увидеть, как структура этого сайта распадается на атомы и восстанавливается.</p>
+        </section>
 
-    <!-- Визуализация структуры -->
-    <section class="structure-visualizer">
-        <h2 style="margin-bottom: 20px;">Карта структуры страницы</h2>
-        <p style="color: var(--text-muted); margin-bottom: 40px;">Наведите на блок, чтобы понять иерархию HTML</p>
-        
-        <div class="map-container">
-            <div class="map-block" data-target="html"> &lt;html&gt; </div>
-            <div class="map-block" data-target="head" style="width: 200px; margin-left: 25px;"> &lt;head&gt; (Мета-данные) </div>
-            <div class="map-block" data-target="body" style="width: 300px;"> &lt;body&gt; </div>
-            <div class="map-block" data-target="nav" style="width: 150px; margin-left: 50px;"> &lt;nav&gt; </div>
-            <div class="map-block" data-target="main" style="width: 150px; margin-left: 50px;"> &lt;main&gt; </div>
-            <div class="map-block" data-target="footer" style="width: 200px; margin-left: 25px;"> &lt;footer&gt; </div>
-        </div>
-    </section>
+        <section class="section">
+            <h2>Как это работает?</h2>
+            <div class="grid">
+                <div class="card" data-tilt>
+                    <h3>Three.js & GPU</h3>
+                    <p>Глобус состоит из тысяч точек, которые рендерятся через BufferGeometry. Это позволяет обрабатывать их прямо на видеокарте.</p>
+                </div>
+                <div class="card" data-tilt>
+                    <h3>LERP-Анимация</h3>
+                    <p>Мы используем линейную интерполяцию для плавного перехода между итерациями сферы и хаоса.</p>
+                </div>
+                <div class="card" data-tilt>
+                    <h3>Оптимизация</h3>
+                    <p>Количество частиц адаптируется под ваше устройство, чтобы даже на телефоне сайт работал плавно.</p>
+                </div>
+            </div>
+        </section>
 
-    <!-- Информационные карточки -->
-    <section class="cards-section">
-        <div class="grid">
-            <div class="card" data-tilt id="html-desc">
-                <h3>Семантика</h3>
-                <p>Использование тегов &lt;nav&gt;, &lt;main&gt; и &lt;footer&gt; делает сайт доступным для людей с ограниченными возможностями и поисковиков.</p>
-            </div>
-            <div class="card" data-tilt id="css-desc">
-                <h3>Стилизация</h3>
-                <p> CSS-переменные позволяют менять тему всего сайта мгновенно, не переписывая тысячи строк кода.</p>
-            </div>
-            <div class="card" data-tilt id="js-desc">
-                <h3>Интерактив</h3>
-                <p>JavaScript управляет состоянием приложения: переключение тем, расчет 3D-наклона и наблюдение за скроллом.</p>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <p>© 2026 | Сделано с 🍪 | <a href="#">Посмотреть исходники</a></p>
-    </footer>
+        <footer style="height: 50vh;">
+            <p>© 2026 | Powered by 🍪 | <a href="#">GitHub</a></p>
+        </footer>
+    </div>
 
     <script>
-        /* 
-           --- 1. УПРАВЛЕНИЕ ТЕМАМИ (THEMES) --- 
-        */
+        /* --- УПРАВЛЕНИЕ ТЕМАМИ И ЦВЕТАМИ --- */
         function setTheme(theme) {
-            if (theme === 'system') {
-                const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-            } else {
-                document.documentElement.setAttribute('data-theme', theme);
+            document.documentElement.setAttribute('data-theme', theme);
+        }
+        function setAccent(color, element) {
+            document.documentElement.style.setProperty('--accent-color', color);
+            document.documentElement.style.setProperty('--accent-glow', color + '66');
+            document.documentElement.style.setProperty('--accent-soft', color + '22');
+            document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
+            element.classList.add('active');
+            
+            // Обновляем цвет частиц глобуса
+            if(globeParticles) {
+                globeParticles.material.color.set(color);
             }
         }
 
-        /* 
-           --- 2. ДИНАМИЧЕСКИЕ ЦВЕТА (ACCENT COLORS) --- 
-        */
-        function setAccent(color, element) {
-            // Обновляем CSS-переменную основного цвета
-            document.documentElement.style.setProperty('--accent-color', color);
-            
-            // Создаем эффект свечения на основе выбранного цвета
-            document.documentElement.style.setProperty('--accent-glow', color + '66'); // добавляем прозрачность
-            document.documentElement.style.setProperty('--accent-soft', color + '22');
+        /* --- THREE.JS ГЛОБУС --- */
+        let scene, camera, renderer, globeParticles;
+        let particlesGeometry, positions, randomPositions;
+        let scrollPercent = 0;
+        let targetScrollPercent = 0;
 
-            // Визуально отмечаем активную кнопку
-            document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
-            element.classList.add('active');
+        function initThree() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 3;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Оптимизация для Retina
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+            // Определяем количество частиц в зависимости от устройства
+            const count = window.innerWidth < 768 ? 2500 : 6000;
+            
+            particlesGeometry = new THREE.BufferGeometry();
+            positions = new Float32Array(count * 3); 
+            randomPositions = new Float32Array(count * 3);
+
+            for (let i = 0; i < count * 3; i++) {
+                // Создаем форму сферы (распределяем точки по поверхности)
+                if (i % 3 === 0) {
+                    const phi = Math.acos(-1 + (2 * i / 3) / count);
+                    const theta = Math.sqrt(count * Math.PI) * (i / 3);
+                    positions[i] = Math.sin(phi) * Math.cos(theta);
+                    positions[i+1] = Math.sin(phi) * Math.sin(theta);
+                    positions[i+2] = Math.cos(phi);
+                }
+                
+                // Создаем случайные позиции для "распада"
+                randomPositions[i] = (Math.random() - 0.5) * 10;
+                randomPositions[i+1] = (Math.random() - 0.5) * 10;
+                randomPositions[i+2] = (Math.random() - 0.5) * 10;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: 0.015,
+                color: 0x00f2ff,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            globeParticles = new THREE.Points(particlesGeometry, material);
+            scene.add(globeParticles);
         }
 
-        /* 
-           --- 3. 3D-НАКЛОН КАРТОЧЕК (TILT) --- 
-        */
-        const cards = document.querySelectorAll('[data-tilt]');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
-                const x = (e.clientX - rect.left) / rect.width;
-                const y = (e.clientY - rect.top) / rect.height;
-                
-                const rotateX = (y - 0.5) * -20;
-                const rotateY = (x - 0.5) * 20;
+        function animate() {
+            requestAnimationFrame(animate);
 
-                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-            });
+            // Плавное приближение к значению скролла (LERP)
+            scrollPercent += (targetScrollPercent - scrollPercent) * 0.05;
 
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = `rotateX(0deg) rotateY(0deg)`;
-            });
+            const posArray = particlesGeometry.attributes.position.array;
+            for (let i = 0; i < posArray.length; i++) {
+                // Интерполяция между исходной позицией (sphere) и случайной (chaos)
+                const start = positions[i];
+                const end = randomPositions[i];
+                posArray[i] = start + (end - start) * scrollPercent;
+            }
+            particlesGeometry.attributes.position.needsUpdate = true;
+
+            // Медленное вращение
+            globeParticles.rotation.y += 0.002;
+            globeParticles.rotation.x += 0.001;
+
+            renderer.render(scene, camera);
+        }
+
+        // Оптимизированный обработчик скролла
+        window.addEventListener('scroll', () => {
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            targetScrollPercent = window.scrollY / maxScroll;
         });
 
-        /* 
-           --- 4. АНИМАЦИЯ ПОЯВЛЕНИЯ (SCROLL REVEAL) --- 
-        */
+        // Обработка изменения размера окна
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        /* --- Остальной интерактив --- */
         const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
+            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
         }, { threshold: 0.1 });
 
-        cards.forEach(card => observer.observe(card));
+        document.querySelectorAll('.card').forEach(c => observer.observe(c));
 
-        /* 
-           --- 5. ЛОГИКА СХЕМЫ СТРУКТУРЫ --- 
-        */
-        const mapBlocks = document.querySelectorAll('.map-block');
-        mapBlocks.forEach(block => {
-            block.addEventListener('mouseenter', () => {
-                block.classList.add('highlight');
-                // Здесь можно добавить логику подсветки конкретной карточки
-                if(block.dataset.target === 'html') document.getElementById('html-desc').style.borderColor = 'var(--accent-color)';
-                if(block.dataset.target === 'body') document.getElementById('css-desc').style.borderColor = 'var(--accent-color)';
-                if(block.dataset.target === 'main') document.getElementById('js-desc').style.borderColor = 'var(--accent-color)';
-            });
-            block.addEventListener('mouseleave', () => {
-                block.classList.remove('highlight');
-                cards.forEach(c => c.style.borderColor = 'var(--accent-soft)');
-            });
-        });
+        // Старт приложения
+        initThree();
+        animate();
     </script>
 </body>
 </html>
