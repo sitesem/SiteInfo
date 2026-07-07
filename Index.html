@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Как устроен этот сайт | Интерактивный гид</title>
+    <style>
+        /* 
+           --- ПЕРЕМЕННЫЕ И БАЗОВЫЕ СТИЛИ --- 
+           Использование переменных позволяет легко менять цветовую схему всего сайта.
+        */
+        :root {
+            --bg-color: #0a0a0c;
+            --card-bg: #16161e;
+            --text-color: #e0e0e0;
+            --accent-color: #00f2ff; /* Неоновый голубой */
+            --accent-glow: rgba(0, 242, 255, 0.5);
+            --secondary-color: #7000ff; /* Фиолетовый акцент */
+            --transition-speed: 0.4s;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* 
+           --- ГЛАВНЫЙ ЭКРАН (HERO SECTION) --- 
+        */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            background: radial-gradient(circle at center, #1a1a2e 0%, var(--bg-color) 70%);
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            margin-bottom: 20px;
+            background: linear-gradient(to right, var(--accent-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px var(--accent-glow));
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+
+        /* Анимация "плавания" для заголовка */
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* 
+           --- СЕКЦИЯ "КАК ЭТО УСТРОЕНО" --- 
+        */
+        .architecture {
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            color: var(--accent-color);
+        }
+
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            perspective: 1000px; /* Важно для 3D эффектов дочерних элементов */
+        }
+
+        /* 
+           --- 3D КАРТОЧКИ --- 
+           Здесь реализована базовая структура для эффекта наклона
+        */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+            transform-style: preserve-3d; /* Позволяет внутренним элементам быть в 3D */
+            cursor: pointer;
+            position: relative;
+            
+            /* Начальное состояние для анимации прокрутки */
+            opacity: 0;
+            transform: translateZ(-100px) translateY(50px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateZ(0) translateY(0);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            transform: translateZ(30px); /* Выталкиваем заголовок вперед */
+        }
+
+        .card p {
+            opacity: 0.7;
+            transform: translateZ(20px); /* Выталкиваем текст чуть меньше заголовка */
+        }
+
+        /* Эффект неонового свечения при наведении */
+        .card:hover {
+            box-shadow: 0 0 30px var(--accent-glow);
+            border-color: var(--accent-color);
+        }
+
+        /* 
+           --- ПОДВАЛ (FOOTER) --- 
+        */
+        footer {
+            padding: 50px 20px;
+            text-align: center;
+            background: #050507;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        footer a:hover {
+            text-shadow: 0 0 10px var(--accent-color);
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            .section-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Главный экран -->
+    <section class="hero">
+        <h1 class="floating">Самодокументированный Сайт</h1>
+        <p>Этот лендинг не просто страница — он является живым примером своего собственного устройства. Исследуйте, как работают 3D и анимации.</p>
+        <div style="margin-top: 20px; opacity: 0.5;">↓ прокрутите вниз</div>
+    </section>
+
+    <!-- Секция архитектуры -->
+    <section class="architecture">
+        <h2 class="section-title">Как я устроен?</h2>
+        
+        <div class="cards-container">
+            <!-- Карточка 1: HTML -->
+            <div class="card" data-tilt>
+                <h3>Структура (HTML5)</h3>
+                <p>Я использую семантические теги (section, header, footer), чтобы быть понятным для поисковых роботов и доступным для всех пользователей.</p>
+            </div>
+
+            <!-- Карточка 2: CSS -->
+            <div class="card" data-tilt>
+                <h3>Стиль (CSS3)</h3>
+                <p>Мой вид создается с помощью Flexbox и CSS Grid. Неоновое свечение и темная тема реализованы через CSS-переменные для легкой настройки.</p>
+            </div>
+
+            <!-- Карточка 3: JS -->
+            <div class="card" data-tilt>
+                <h3>Логика (JS)</h3>
+                <p>Ванильный JavaScript отвечает за расчет 3D-наклона карточек при движении мыши и появление элементов при скролле.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Подвал -->
+    <footer>
+        <p>Создано с помощью ⚡️ и 🤖 | <a href="#">GitHub Profile</a></p>
+    </footer>
+
+    <script>
+        /* 
+           --- 1. ЭФФЕКТ 3D-НАКЛОНА (TILT EFFECT) --- 
+           Логика: вычисляем положение курсора относительно центра карточки 
+           и конвертируем это в градусы поворота X и Y.
+        */
+        const cards = document.querySelectorAll('[data-tilt]');
+
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; // положение мыши по X внутри карточки
+                const y = e.clientY - rect.top;  // положение мыши по Y внутри карточки
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Вычисляем отклонение от центра в процентах/градусах (макс 15 градусов)
+                const rotateX = ((y - centerY) / centerY) * -15; 
+                const rotateY = ((x - centerX) / centerX) * 15;
+
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            // Возвращаем карточку в исходное состояние, когда мышь уходит
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `rotateX(0deg) rotateY(0deg)`;
+            });
+        });
+
+        /* 
+           --- 2. АНИМАЦИЯ ПОЯВЛЕНИЯ ПРИ СКРОЛЛЕ --- 
+           Используем Intersection Observer API — это самый производительный 
+           способ отслеживать видимость элементов на странице.
+        */
+        const observerOptions = {
+            threshold: 0.2 // Элемент считается видимым, когда 20% его площади в кадре
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // Перестаем следить за элементом после того, как он появился
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Запускаем наблюдение за каждой карточкой
+        cards.forEach(card => observer.observe(card));
+    </script>
+</body>
+</html>
